@@ -1,152 +1,152 @@
----1 Создание базы данных по умолчанию
+---1 РЎРѕР·РґР°РЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 CREATE DATABASE test1_new;
 GO
 
 
 
----2 с указанием файлов
+---2 СЃ СѓРєР°Р·Р°РЅРёРµРј С„Р°Р№Р»РѕРІ
 CREATE DATABASE [test2]
-ON  PRIMARY 
-( NAME = test2, FILENAME = N'D:\1-DDL\test2.mdf' , 
-	SIZE = 8MB , 
-	MAXSIZE = UNLIMITED, 
-	FILEGROWTH = 65536KB )
- LOG ON 
-( NAME = test2_log, FILENAME = N'D:\1-DDL\test2_log.ldf' , 
-	SIZE = 8MB , 
-	MAXSIZE = 10GB , 
-	FILEGROWTH = 65536KB )
+ON PRIMARY
+( NAME = test2, FILENAME = N'D:\1-DDL\test2.mdf' ,
+SIZE = 8MB ,
+MAXSIZE = UNLIMITED,
+FILEGROWTH = 65536KB )
+LOG ON
+( NAME = test2_log, FILENAME = N'D:\1-DDL\test2_log.ldf' ,
+SIZE = 8MB ,
+MAXSIZE = 10GB ,
+FILEGROWTH = 65536KB )
 GO
 
----- удаление базы данных
+---- СѓРґР°Р»РµРЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
 drop database test2;
 
--- или
+-- РёР»Рё
 
-USE master; 
-GO 
-IF DB_ID (N'test2') IS NOT NULL 
-	DROP DATABASE test2; 
-GO 
-
-
----3 с файловыми группами
-CREATE DATABASE [test2]
- ON  PRIMARY 
-	( NAME = test2, FILENAME = N'D:\1-DDL\test2.mdf' , 
-		SIZE = 8MB , 
-		MAXSIZE = 50Mb, 
-		FILEGROWTH = 10MB ),
-	( NAME = test2_2, FILENAME = N'D:\1-DDL\test2_2.mdf' , 
-		SIZE = 8MB , 
-		MAXSIZE = 50Mb, 
-		FILEGROWTH = 10% ),
-
-	FILEGROUP test2_gr2
-	( NAME = test2_f1, FILENAME = N'F:\2-DDL\test2_f1.ndf',
-          SIZE = 10MB,
-          MAXSIZE = 50MB,
-          FILEGROWTH = 10%),
-	
-	( NAME = test2_f2,
-	  FILENAME = N'F:\2-DDL\test2_f2.ndf',
-          SIZE = 10MB,
-          MAXSIZE = 50MB,
-          FILEGROWTH = 10%)
-
- LOG ON 
-	( NAME = test2_log, FILENAME = N'D:\1-DDL\test2_log.ldf' , 
-		SIZE = 8MB , 
-		MAXSIZE = 10GB , 
-		FILEGROWTH = 65536KB ),
-	( NAME = test2_log_f, FILENAME = N'F:\2-DDL\test2_log_f.ldf' , 
-		SIZE = 10MB , 
-		MAXSIZE = 50GB , 
-		FILEGROWTH = 10Mb )
+USE master;
+GO
+IF DB_ID (N'test2') IS NOT NULL
+DROP DATABASE test2;
 GO
 
--- 4 Редактирование БД
---добавление 3-го файла данных в файловую группу 2
+
+---3 СЃ С„Р°Р№Р»РѕРІС‹РјРё РіСЂСѓРїРїР°РјРё
+CREATE DATABASE [test2]
+ON PRIMARY
+( NAME = test2, FILENAME = N'D:\1-DDL\test2.mdf' ,
+SIZE = 8MB ,
+MAXSIZE = 50Mb,
+FILEGROWTH = 10MB ),
+( NAME = test2_2, FILENAME = N'D:\1-DDL\test2_2.mdf' ,
+SIZE = 8MB ,
+MAXSIZE = 50Mb,
+FILEGROWTH = 10% ),
+
+FILEGROUP test2_gr2
+( NAME = test2_f1, FILENAME = N'F:\2-DDL\test2_f1.ndf',
+SIZE = 10MB,
+MAXSIZE = 50MB,
+FILEGROWTH = 10%),
+
+( NAME = test2_f2,
+FILENAME = N'F:\2-DDL\test2_f2.ndf',
+SIZE = 10MB,
+MAXSIZE = 50MB,
+FILEGROWTH = 10%)
+
+LOG ON
+( NAME = test2_log, FILENAME = N'D:\1-DDL\test2_log.ldf' ,
+SIZE = 8MB ,
+MAXSIZE = 10GB ,
+FILEGROWTH = 65536KB ),
+( NAME = test2_log_f, FILENAME = N'F:\2-DDL\test2_log_f.ldf' ,
+SIZE = 10MB ,
+MAXSIZE = 50GB ,
+FILEGROWTH = 10Mb )
+GO
+
+-- 4 Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ Р‘Р”
+--РґРѕР±Р°РІР»РµРЅРёРµ 3-РіРѕ С„Р°Р№Р»Р° РґР°РЅРЅС‹С… РІ С„Р°Р№Р»РѕРІСѓСЋ РіСЂСѓРїРїСѓ 2
 use test2;
 
-ALTER DATABASE [test2] 
-ADD FILE 
-( 
-    NAME = N'test2_f3', 
-    FILENAME = N'F:\2-DDL\test2_f3.ndf', 
-    MAXSIZE = 100MB 
-) 
-TO FILEGROUP [test2_gr2] 
-GO  
-
--- изменение имени БД
-USE master; 
-GO 
-ALTER DATABASE test1_new 
-Modify Name = test1 ; 
+ALTER DATABASE [test2]
+ADD FILE
+(
+NAME = N'test2_f3',
+FILENAME = N'F:\2-DDL\test2_f3.ndf',
+MAXSIZE = 100MB
+)
+TO FILEGROUP [test2_gr2]
 GO
 
---- добавление файловой группы, файла данных и журнала в новую группу  
-ALTER DATABASE test1 
-ADD FILEGROUP test1_FG2; 
-GO 
+-- РёР·РјРµРЅРµРЅРёРµ РёРјРµРЅРё Р‘Р”
+USE master;
+GO
+ALTER DATABASE test1_new
+Modify Name = test1 ;
+GO
 
-ALTER DATABASE test1 
-ADD FILE  
-( 
-    NAME = N'test1_f1', 
-    FILENAME = N'C:\0-DDL\test1_f1.ndf', 
-    SIZE = 5MB, 
-    MAXSIZE = 100MB,
-	FILEGROWTH = 5MB 
+--- РґРѕР±Р°РІР»РµРЅРёРµ С„Р°Р№Р»РѕРІРѕР№ РіСЂСѓРїРїС‹, С„Р°Р№Р»Р° РґР°РЅРЅС‹С… Рё Р¶СѓСЂРЅР°Р»Р° РІ РЅРѕРІСѓСЋ РіСЂСѓРїРїСѓ
+ALTER DATABASE test1
+ADD FILEGROUP test1_FG2;
+GO
+
+ALTER DATABASE test1
+ADD FILE
+(
+NAME = N'test1_f1',
+FILENAME = N'C:\0-DDL\test1_f1.ndf',
+SIZE = 5MB,
+MAXSIZE = 100MB,
+FILEGROWTH = 5MB
 )
- TO FILEGROUP test1_FG2; 
-GO 
+TO FILEGROUP test1_FG2;
+GO
 
-ALTER DATABASE test1 
-ADD LOG FILE  
-( 
-    NAME = N'test1_log_f1', 
-    FILENAME = N'F:\2-DDL\test1_log_f1.ldf', 
-    SIZE = 5MB, 
-    MAXSIZE = 100MB,
-	FILEGROWTH = 5MB 
-); 
-GO 
+ALTER DATABASE test1
+ADD LOG FILE
+(
+NAME = N'test1_log_f1',
+FILENAME = N'F:\2-DDL\test1_log_f1.ldf',
+SIZE = 5MB,
+MAXSIZE = 100MB,
+FILEGROWTH = 5MB
+);
+GO
 
----изменение размера 
-ALTER DATABASE test1  
-MODIFY FILE 
-    (NAME = N'test1_f1', 
-    SIZE = 50MB);
-GO  
+---РёР·РјРµРЅРµРЅРёРµ СЂР°Р·РјРµСЂР°
+ALTER DATABASE test1
+MODIFY FILE
+(NAME = N'test1_f1',
+SIZE = 50MB);
+GO
 
 drop database test1;
 
 create database test1;
 
-USE master; 
-GO 
-IF DB_ID (N'test1') IS NOT NULL 
-	DROP DATABASE test1; 
+USE master;
+GO
+IF DB_ID (N'test1') IS NOT NULL
+DROP DATABASE test1;
 
-----5 Создание таблиц
+----5 РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†
 use test2;
 GO
 
 CREATE TABLE student(
-	id 	int not null identity(1, 1)  primary key,
-	fio	varchar(50) ,
-	d_r	date 
+id int not null identity(1, 1) primary key,
+fiovarchar(50) ,
+d_rdate
 )
 
 EXEC sp_help student;
 
-insert into student values	('Иванов', '10/03/2000'), 
-							('Петров', '20/04/2001'),
-							('Сидоров', '15/10/1999');
+insert into student values('РРІР°РЅРѕРІ', '10/03/2000'),
+('РџРµС‚СЂРѕРІ', '20/04/2001'),
+('РЎРёРґРѕСЂРѕРІ', '15/10/1999');
 
----6 создание моментального снимка базы
+---6 СЃРѕР·РґР°РЅРёРµ РјРѕРјРµРЅС‚Р°Р»СЊРЅРѕРіРѕ СЃРЅРёРјРєР° Р±Р°Р·С‹
 
 CREATE DATABASE test2_copy1 ON
 ( NAME = test2 , FILENAME = 'C:\0-DDL\test2_copy1.ss' ),
@@ -160,31 +160,31 @@ GO
 use test2_copy1;
 select * from student;
 
-insert into student values	('Иванов 2', '10/03/2000'); 
+insert into student values('РРІР°РЅРѕРІ 2', '10/03/2000');
 
 use master;
 drop database test2_copy1;
 
------- 7 Создание новой схемы
+------ 7 РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕР№ СЃС…РµРјС‹
 use test2;
 
-create schema sch_2; 
+create schema sch_2;
 
---- создание таблицы в новой схеме и другой группе
+--- СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ РІ РЅРѕРІРѕР№ СЃС…РµРјРµ Рё РґСЂСѓРіРѕР№ РіСЂСѓРїРїРµ
 CREATE TABLE sch_2.student(
-	id 	int not null identity(1, 1)  primary key,
-	fio	varchar(50) ,
-	d_r	date 
+id int not null identity(1, 1) primary key,
+fiovarchar(50) ,
+d_rdate
 ) on test2_gr2;
 
 
--- 8 Создание таблицы с разреженным столбцом
+-- 8 РЎРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС†С‹ СЃ СЂР°Р·СЂРµР¶РµРЅРЅС‹Рј СЃС‚РѕР»Р±С†РѕРј
 CREATE TABLE Tablesparse (
-	id	int PRIMARY KEY,
-	field1 varchar(50) SPARSE NULL 
+idint PRIMARY KEY,
+field1 varchar(50) SPARSE NULL
 ) ;
 
----9 Создание синонима
+---9 РЎРѕР·РґР°РЅРёРµ СЃРёРЅРѕРЅРёРјР°
 
 CREATE SYNONYM db_test1 FOR test1.dbo.table1;
 
@@ -193,107 +193,107 @@ select * from db_test1;
 
 use test1;
 CREATE TABLE table1(
-	id 	int not null identity(1, 1)  primary key,
-	fio	varchar(50)
+id int not null identity(1, 1) primary key,
+fiovarchar(50)
 )
 GO
 
 
---- 10 Редактирование таблиц
+--- 10 Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ С‚Р°Р±Р»РёС†
 -----
 use test2;
 
 CREATE TABLE kurs(
-	id 			int not null identity(1, 1)  primary key,		
-	name_k 		varchar(100) ,
-	autor 		varchar(50)  ,
-	price 		money 
+id int not null identity(1, 1) primary key,
+name_k varchar(100) ,
+autor varchar(50) ,
+price money
 );
 
 
 CREATE TABLE vebinar (
-	id 	int not null identity(1, 1)  primary key,
-	id_s 		int not null ,
-	id_k 		int not null ,
-	name_v  	varchar(100) ,
-	fio_v		varchar (50) ,
-	date_v		datetime,
-	d_z			int  
+id int not null identity(1, 1) primary key,
+id_s int not null ,
+id_k int not null ,
+name_v varchar(100) ,
+fio_vvarchar (50) ,
+date_vdatetime,
+d_zint
 )
 
--- установление связи
-ALTER TABLE vebinar  ADD  CONSTRAINT FK_v_st FOREIGN KEY(id_s)
+-- СѓСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЃРІСЏР·Рё
+ALTER TABLE vebinar ADD CONSTRAINT FK_v_st FOREIGN KEY(id_s)
 REFERENCES student (id)
 ON UPDATE CASCADE
 ON DELETE CASCADE
 
 
-ALTER TABLE vebinar  ADD  CONSTRAINT FK_v_k FOREIGN KEY(id_k)
+ALTER TABLE vebinar ADD CONSTRAINT FK_v_k FOREIGN KEY(id_k)
 REFERENCES kurs (id)
 
 
---------- Значение по умолчанию
---при добавлении новой записи в поле “Домашнее задание” по умолчанию заносится 0
-ALTER TABLE vebinar ADD  CONSTRAINT v_dz DEFAULT (0) FOR d_z;
+--------- Р—РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+--РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РЅРѕРІРѕР№ Р·Р°РїРёСЃРё РІ РїРѕР»Рµ вЂњР”РѕРјР°С€РЅРµРµ Р·Р°РґР°РЅРёРµвЂќ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Р·Р°РЅРѕСЃРёС‚СЃСЏ 0
+ALTER TABLE vebinar ADD CONSTRAINT v_dz DEFAULT (0) FOR d_z;
 
----- Ограничение по возрасту - зачислять можно только студентов c 18 лет 
-ALTER TABLE student 
-	ADD CONSTRAINT constr_dr 
-		CHECK (datediff(yy, d_r, getdate()) >=18);
+---- РћРіСЂР°РЅРёС‡РµРЅРёРµ РїРѕ РІРѕР·СЂР°СЃС‚Сѓ - Р·Р°С‡РёСЃР»СЏС‚СЊ РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ СЃС‚СѓРґРµРЅС‚РѕРІ c 18 Р»РµС‚
+ALTER TABLE student
+ADD CONSTRAINT constr_dr
+CHECK (datediff(yy, d_r, getdate()) >=18);
 
---Активация и деактивация ограничений
-insert into student values	('Сидоров', '10/03/2010'); 
+--РђРєС‚РёРІР°С†РёСЏ Рё РґРµР°РєС‚РёРІР°С†РёСЏ РѕРіСЂР°РЅРёС‡РµРЅРёР№
+insert into student values('РЎРёРґРѕСЂРѕРІ', '10/03/2010');
 
 ALTER TABLE student NOCHECK CONSTRAINT constr_dr;
 
-insert into student values	('Сидоров', '10/03/2010'); 
+insert into student values('РЎРёРґРѕСЂРѕРІ', '10/03/2010');
 
 ALTER TABLE student CHECK CONSTRAINT constr_dr;
 
---- удаление ограничения
-ALTER TABLE student  DROP CONSTRAINT constr_dr;
+--- СѓРґР°Р»РµРЅРёРµ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ
+ALTER TABLE student DROP CONSTRAINT constr_dr;
 
 
----11 создание последовательности
+---11 СЃРѕР·РґР°РЅРёРµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё
 CREATE SEQUENCE example_seq
-  AS int
-  START WITH 1
-  INCREMENT BY 1
-  MINVALUE 0
-  MAXVALUE 3
-  CYCLE;
+AS int
+START WITH 1
+INCREMENT BY 1
+MINVALUE 0
+MAXVALUE 3
+CYCLE;
 
 select next value for example_seq;
 
 drop sequence example_seq;
 
 CREATE SEQUENCE table_seq
-  START WITH 1
-  INCREMENT BY 1;
-  
+START WITH 1
+INCREMENT BY 1;
+
 create table customer(
 id int primary key,
 fio varchar(50));
 
 insert into customer values (
-NEXT VALUE FOR table_seq, 'Иван2');
+NEXT VALUE FOR table_seq, 'РРІР°РЅ2');
 
-select * from customer 
+select * from customer
 
 create table customer_2(
 id int primary key CONSTRAINT id_sec DEFAULT (NEXT VALUE FOR table_seq) ,
 fio varchar(50));
 
-insert into customer_2(fio) values ('Петр2');
+insert into customer_2(fio) values ('РџРµС‚СЂ2');
 
 
 
-----12 Создание индекса
+----12 РЎРѕР·РґР°РЅРёРµ РёРЅРґРµРєСЃР°
 create index idx_fio on student (fio);
 
 
-ALTER TABLE sch_2.student 
-	ADD e_mail varchar(50) constraint e_mail_un unique;
+ALTER TABLE sch_2.student
+ADD e_mail varchar(50) constraint e_mail_un unique;
 
 
 --- 13 system versioned tables
@@ -305,45 +305,45 @@ WHERE CustomerName like 'J%'
 ORDER BY CustomerID
 
 SELECT ValidFrom, ValidTo, *
- FROM Sales.Customers FOR System_Time AS OF '20130101'
+FROM Sales.Customers FOR System_Time AS OF '20130101'
 -- FROM Sales.Customers FOR System_Time BETWEEN '20121201' AND '20130101'
 -- FROM Sales.Customers FOR System_Time FROM '20121201' TO '20130101'
 -- FROM Sales.Customers FOR System_Time CONTAINED IN ('20130501' ,'20190212')
-WHERE CustomerName like 'J%'	
+WHERE CustomerName like 'J%'
 ORDER BY CustomerID
 
 SELECT ValidFrom, ValidTo, c.*
 FROM Sales.Customers FOR System_Time ALL c
-WHERE CustomerName like 'J%'	
+WHERE CustomerName like 'J%'
 ORDER BY c.CustomerID, c.ValidFrom
 
 ---
 use test2;
 
---- с анонимной таблицей архива
+--- СЃ Р°РЅРѕРЅРёРјРЅРѕР№ С‚Р°Р±Р»РёС†РµР№ Р°СЂС…РёРІР°
 CREATE TABLE Course
 (
-    ID INT NOT NULL PRIMARY KEY CLUSTERED
-  , CourseName VARCHAR(50) NOT NULL
-  , StartTime DATETIME2 GENERATED ALWAYS AS ROW START NOT NULL
-  , EndTime DATETIME2 GENERATED ALWAYS AS ROW END NOT NULL
-  , PERIOD FOR SYSTEM_TIME (StartTime, EndTime)
+ID INT NOT NULL PRIMARY KEY CLUSTERED
+, CourseName VARCHAR(50) NOT NULL
+, StartTime DATETIME2 GENERATED ALWAYS AS ROW START NOT NULL
+, EndTime DATETIME2 GENERATED ALWAYS AS ROW END NOT NULL
+, PERIOD FOR SYSTEM_TIME (StartTime, EndTime)
 )
 WITH (SYSTEM_VERSIONING = ON);
 
-insert into Course(ID, CourseName) values (1, 'БД')
+insert into Course(ID, CourseName) values (1, 'Р‘Р”')
 update Course set CourseName = 'DataBase';
-delete from Course 
+delete from Course
 select * from Course FOR System_Time ALL;
 
---- с таблицей архива по умолчанию 
+--- СЃ С‚Р°Р±Р»РёС†РµР№ Р°СЂС…РёРІР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 CREATE TABLE Course2
 (
-    ID INT NOT NULL PRIMARY KEY CLUSTERED
-  , CourseName VARCHAR(50) NOT NULL
-  , StartTime DATETIME2 GENERATED ALWAYS AS ROW START NOT NULL
-  , EndTime DATETIME2 GENERATED ALWAYS AS ROW END NOT NULL
-  , PERIOD FOR SYSTEM_TIME (StartTime, EndTime)
+ID INT NOT NULL PRIMARY KEY CLUSTERED
+, CourseName VARCHAR(50) NOT NULL
+, StartTime DATETIME2 GENERATED ALWAYS AS ROW START NOT NULL
+, EndTime DATETIME2 GENERATED ALWAYS AS ROW END NOT NULL
+, PERIOD FOR SYSTEM_TIME (StartTime, EndTime)
 )
 WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = sch_2.CourseHistory));
 
@@ -354,59 +354,59 @@ drop table Course2;
 drop table sch_2.CourseHistory;
 
 
------14 Графовые таблицы
+-----14 Р“СЂР°С„РѕРІС‹Рµ С‚Р°Р±Р»РёС†С‹
 CREATE TABLE Person (ID INTEGER PRIMARY KEY, Name VARCHAR(100), Age INT) AS NODE;
 CREATE TABLE friends (StartDate date) AS EDGE;
 
 select * from Person;
 
-insert into Person(ID, Name, Age) 
-values  (1, 'Ваня', 18),
-		(2, 'Оля', 17),
-		(3, 'Саша', 20);
+insert into Person(ID, Name, Age)
+values (1, 'Р’Р°РЅСЏ', 18),
+(2, 'РћР»СЏ', 17),
+(3, 'РЎР°С€Р°', 20);
 
 select * from friends;
 
 insert into friends
-values  ((SELECT $node_id FROM Person WHERE ID = 1), 
-			(SELECT $node_id FROM Person WHERE ID = 2), '20/01/2021'),
-		((SELECT $node_id FROM Person WHERE ID = 1), 
-			(SELECT $node_id FROM Person WHERE ID = 1), '20/01/2021'),
-		((SELECT $node_id FROM Person WHERE ID = 1), 
-			(SELECT $node_id FROM Person WHERE ID = 3), '15/02/2021'),
-		((SELECT $node_id FROM Person WHERE ID = 2), 
-			(SELECT $node_id FROM Person WHERE ID = 3), '04/02/2021'),
-		((SELECT $node_id FROM Person WHERE ID = 3), 
-			(SELECT $node_id FROM Person WHERE ID = 1), '16/02/2021');
+values ((SELECT $node_id FROM Person WHERE ID = 1),
+(SELECT $node_id FROM Person WHERE ID = 2), '20/01/2021'),
+((SELECT $node_id FROM Person WHERE ID = 1),
+(SELECT $node_id FROM Person WHERE ID = 1), '20/01/2021'),
+((SELECT $node_id FROM Person WHERE ID = 1),
+(SELECT $node_id FROM Person WHERE ID = 3), '15/02/2021'),
+((SELECT $node_id FROM Person WHERE ID = 2),
+(SELECT $node_id FROM Person WHERE ID = 3), '04/02/2021'),
+((SELECT $node_id FROM Person WHERE ID = 3),
+(SELECT $node_id FROM Person WHERE ID = 1), '16/02/2021');
 
 
-SELECT Person2.Name 
+SELECT Person2.Name
 FROM Person Person1, friends, Person Person2
 WHERE MATCH(Person1-(friends)->Person2)
-AND Person1.Name = 'Ваня';
+AND Person1.Name = 'Р’Р°РЅСЏ';
 
---- 15 удаление 
+--- 15 СѓРґР°Р»РµРЅРёРµ
 use test2;
 
 drop table if exists sch_2.student ;
-select * from student 
+select * from student
 delete from student;
-insert into student values	('Сидоров', '10/03/2000'); 
+insert into student values('РЎРёРґРѕСЂРѕРІ', '10/03/2000');
 
 truncate table student;
 alter table vebinar drop constraint fk_v_st;
 
-insert into student values	('Сидоров', '10/03/2000'); 
+insert into student values('РЎРёРґРѕСЂРѕРІ', '10/03/2000');
 
 truncate table customer;
-insert into customer values	(NEXT VALUE FOR table_seq, 'Сидоров'); 
+insert into customer values(NEXT VALUE FOR table_seq, 'РЎРёРґРѕСЂРѕРІ');
 select * from customer
 -----
 truncate table Course
 
-USE master; 
-GO 
+USE master;
+GO
 
-IF DB_ID (N'test2') IS NOT NULL 
-	DROP DATABASE test2; 
-GO 
+IF DB_ID (N'test2') IS NOT NULL
+DROP DATABASE test2;
+GO
